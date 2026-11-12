@@ -99,6 +99,16 @@ pipeline {
                 }
             }
         }
+
+        stage('Phase 4 bis - Monitoring (Prometheus + alerte mail)') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    withCredentials([string(credentialsId: 'gmail-app-password', variable: 'SMTP_PASS')]) {
+                        sh 'bash monitoring/start-monitoring.sh'
+                    }
+                }
+            }
+        }
     }
 
     post {
@@ -111,12 +121,3 @@ pipeline {
         }
     }
 }
-        stage('Phase 4 bis - Monitoring (Prometheus + alerte mail)') {
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    withCredentials([string(credentialsId: 'gmail-app-password', variable: 'SMTP_PASS')]) {
-                        sh 'bash monitoring/start-monitoring.sh'
-                    }
-                }
-            }
-        }
