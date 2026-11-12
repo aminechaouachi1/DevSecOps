@@ -1,0 +1,10 @@
+groups:
+  - name: devsecops-prod
+    rules:
+      - alert: AppDown
+        expr: probe_success{job="prod-health"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "devsecops-prod ne repond plus sur /health (port 8081)"

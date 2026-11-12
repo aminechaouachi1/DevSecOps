@@ -1,3 +1,4 @@
 reports/
 .trivycache/
 image.tar
+monitoring/alertmanager.generated.yml
