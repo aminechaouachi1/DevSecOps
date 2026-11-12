@@ -51,6 +51,7 @@ pipeline {
                     docker run --rm --network $NET -v "$WORKSPACE/reports":/zap/wrk:rw \
                         ghcr.io/zaproxy/zaproxy:stable \
                         zap-baseline.py -t http://$APP:5000 -r zap.html -J zap.json || true
+                    test -f reports/zap.html || { echo "ZAP report missing"; exit 1; }
                 '''
             }
         }
@@ -89,7 +90,7 @@ pipeline {
                             falcosecurity/falco:0.45.2
                         sleep 15
                         # Simulation d'une intrusion dans le conteneur de prod
-                        docker exec devsecops-prod cat /etc/shadow > /dev/null
+                        docker exec -u root devsecops-prod cat /etc/shadow > /dev/null
                         docker exec -u root devsecops-prod touch /etc/pwned
                         sleep 5
                         docker logs falco > reports/falco.log 2>&1
