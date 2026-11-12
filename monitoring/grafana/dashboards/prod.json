@@ -1,0 +1,47 @@
+{
+  "uid": "devsecops-prod",
+  "title": "DevSecOps - Production",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Etat de la production (/health)",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prom" },
+      "targets": [ { "refId": "A", "expr": "probe_success{job=\"prod-health\"}" } ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [ { "type": "value", "options": {
+            "0": { "text": "DOWN", "color": "red" },
+            "1": { "text": "UP", "color": "green" } } } ],
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "red", "value": null }, { "color": "green", "value": 1 } ] }
+        }, "overrides": []
+      },
+      "options": { "colorMode": "background", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 2, "type": "stat", "title": "Code HTTP",
+      "gridPos": { "h": 6, "w": 4, "x": 8, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prom" },
+      "targets": [ { "refId": "A", "expr": "probe_http_status_code{job=\"prod-health\"}" } ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 3, "type": "timeseries", "title": "Disponibilite (1 = UP, 0 = DOWN)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "prom" },
+      "targets": [ { "refId": "A", "expr": "probe_success{job=\"prod-health\"}", "legendFormat": "probe_success" } ],
+      "fieldConfig": { "defaults": { "min": 0, "max": 1 }, "overrides": [] }
+    },
+    {
+      "id": 4, "type": "timeseries", "title": "Temps de reponse de /health",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "prom" },
+      "targets": [ { "refId": "A", "expr": "probe_duration_seconds{job=\"prod-health\"}", "legendFormat": "duree" } ],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    }
+  ]
+}
